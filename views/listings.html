@@ -1,0 +1,17 @@
+<body>
+    <div class="container">
+        {{#listings}}
+        <div class="card">
+            <div class="card-header"><strong>{{title}}</strong></div>
+                <div class="card-body">
+                    <p class="card-text">{{description}}</p>
+                    <p class="card-text">${{price}}</p>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Edit</button>
+            <button type="submit" class="btn btn-primary">Delete</button>
+        </div>
+        {{/listings}}
+    </div>
+    <br>
+</body>

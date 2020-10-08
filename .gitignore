@@ -1,0 +1,4 @@
+scratch/
+node_modules/
+config/db.js
+config/default.json
