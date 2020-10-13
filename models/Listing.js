@@ -31,6 +31,11 @@ const ListingSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    category:
+    {
+        type: String,
+        required: true
+    },
     photo:
     {
         type: String,

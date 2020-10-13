@@ -1,17 +1,13 @@
 const config = require('config');
 const jwt = require('jsonwebtoken');
-const LocalStorage = require('node-localstorage').LocalStorage;
-localStorage = new LocalStorage('./scratch');
 
 module.exports = function(req, res, next) 
 {
-    // Get the token from the header
-    // const token = req.header('x-auth-token');
+    // Get the token from the cookie
 
-    token = localStorage.getItem('token');
+    const { cookies } = req;
 
-    console.log(token);
-    console.log("HI");
+    token = cookies.token;
 
     // If token exists or not
     if(!token)

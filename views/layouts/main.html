@@ -18,27 +18,27 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
+                <li class="nav-item {{#if active.home}}active{{/if}}">
                     <a class="nav-link" href="/">Home</a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item {{#if active.listings}}active{{/if}}">
                     <a class="nav-link" href="/listings">Listings</a>
                 </li>
                 {{#if token}}
-                <li class="nav-item">
+                <li class="nav-item {{#if active.my_listings}}active{{/if}}">
                     <a class="nav-link" href="/my_listings">My Listings</a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item {{#if active.create}}active{{/if}}">
                     <a class="nav-link" href="/create">Create</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/logout">Log Out</a>
                 </li>
                 {{else}}
-                <li class="nav-item">
+                <li class="nav-item {{#if active.login}}active{{/if}}">
                     <a class="nav-link" href="/login">Log In</a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item {{#if active.register}}active{{/if}}">
                     <a class="nav-link" href="/register">Register</a>
                 </li>
                 {{/if}}
@@ -52,7 +52,7 @@
     </div>
 
     <!-- Footer -->
-    <footer class="py-5 bg-dark">
+    <footer id="footer" class="py-5 bg-dark">
         <div class="container">
         <p class="m-0 text-center text-white">Copyright &copy; Tronix 2020</p>
         </div>

@@ -1,25 +1,26 @@
 <body>
     <div class="container">
       <div id="listing-form">
-        <h1>Create a listing</h1>
+        <h1>Edit your listing</h1>
         <br>
-        <form action="/create" method="post">
+        {{#listing}}
+        <form action="/listings/{{_id}}/edit" method="post">
             <div class="form-group">
               <label for="InputTitle1">Title</label>
-              <input type="text" name="title" class="form-control" aria-describedby="titleHelp" placeholder="Enter title">
+              <input type="text" name="title" class="form-control" aria-describedby="titleHelp" placeholder="Enter title" value="{{title}}"">
             </div>
             <div class="form-group">
               <label for="InputDescription1">Description</label>
-              <input type="text" name="description" class="form-control" placeholder="Enter description">
+              <input type="text" name="description" class="form-control" placeholder="Enter description" value="{{description}}"">
             </div>
             <div class="form-group">
               <label for="InputPrice1">Price</label>
-              <input type="number" min="0" name="price" class="form-control" placeholder="Enter price" step=".01">
+              <input type="number" min="0" name="price" class="form-control" placeholder="Enter price" step=".01" value="{{price}}">
             </div>
             <div class="form-group">
               <label for="FormControlCategory1">Category</label>
-              <select class="form-control" name="category">
-                <option hidden disabled selected value>Select a category</option>
+              <select class="form-control" name="category" id="category">
+                <option value={{category}} hidden disabled selected value>{{category}}</option>
                 <option value="Gaming">Gaming</option>
                 <option value="Music">Music</option>
                 <option value="TVs">TVs</option>
@@ -30,6 +31,7 @@
             <button type="submit" class="btn btn-primary">Photo</button>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
+        {{/listing}}
       </div>
     </div>
 </body>

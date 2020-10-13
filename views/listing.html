@@ -1,7 +1,72 @@
 <body>
-    {{#listing}}
-        <h1>{{title}}</h1>
-        <h2>{{description}}</h2>
-        <h2>${{price}}</h2>
-    {{/listing}}
+  <!-- Page Content -->
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-3">
+        <h1 class="my-4">Tronix</h1>
+        <div class="list-group">
+          <input type="text" class="list-group-item" placeholder="Search..."/>
+          <a href="/listings" class="list-group-item">All</a>
+          <a href="#" class="list-group-item">Gaming</input>
+          <a href="#" class="list-group-item">Music</a>
+          <a href="#" class="list-group-item">TVs</a>
+          <a href="#" class="list-group-item">Computers</a>
+          <a href="#" class="list-group-item">Phones</a>
+        </div>
+      </div>
+      <!-- /.col-lg-3 -->
+
+      <div class="col-lg-9">
+        {{#listing}}
+        <div class="card mt-4">
+          <img class="card-img-top img-fluid" src="http://placehold.it/900x400" alt="">
+          <div class="card-body">
+            <h3 class="card-title">{{title}}</h3>
+            <h4>${{price}}</h4>
+            <p class="card-text">{{description}}</p>
+            <div class="row">
+              <a href="/listings/{{_id}}/edit" class="btn btn-primary">Edit</a>
+
+              <form method="post" action="/listings/{{_id}}/delete" class="inline">
+                <!-- <input type="hidden" name="extra_submit_param" value="extra_submit_value"> -->
+                <button type="submit" class="btn btn-primary">Delete</button>
+              </form>
+            </div>
+
+            <!-- <a href="/listings/{{_id}}/delete" class="btn btn-primary">Delete</a> -->
+          </div>
+        </div>
+        {{/listing}}
+        <!-- /.card -->
+
+        <div class="card card-outline-secondary my-4">
+          <div class="card-header">
+            Product Reviews
+          </div>
+          <div class="card-body">
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Omnis et enim aperiam inventore, similique necessitatibus neque non! Doloribus, modi sapiente laboriosam aperiam fugiat laborum. Sequi mollitia, necessitatibus quae sint natus.</p>
+            <small class="text-muted">Posted by Anonymous on 3/1/17</small>
+            <hr>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Omnis et enim aperiam inventore, similique necessitatibus neque non! Doloribus, modi sapiente laboriosam aperiam fugiat laborum. Sequi mollitia, necessitatibus quae sint natus.</p>
+            <small class="text-muted">Posted by Anonymous on 3/1/17</small>
+            <hr>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Omnis et enim aperiam inventore, similique necessitatibus neque non! Doloribus, modi sapiente laboriosam aperiam fugiat laborum. Sequi mollitia, necessitatibus quae sint natus.</p>
+            <small class="text-muted">Posted by Anonymous on 3/1/17</small>
+            <hr>
+            <a href="#" class="btn btn-success">Leave a Review</a>
+          </div>
+        </div>
+        <!-- /.card -->
+
+      </div>
+      <!-- /.col-lg-9 -->
+
+    </div>
+
+  </div>
+  <!-- /.container -->
+
 </body>
+
+</html>
+
