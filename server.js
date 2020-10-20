@@ -72,8 +72,6 @@ app.get('/register', (req, res) =>
 
     token = cookies.token;
 
-    console.log(token);
-
     if(token)
     {
         return res.redirect('/');
@@ -166,8 +164,6 @@ app.get('/login', (req, res) =>
     const { cookies } = req;
 
     token = cookies.token;
-
-    console.log(token);
 
     if(token)
     {
@@ -272,10 +268,59 @@ app.get('/listings', async (req, res) =>
     }
     else
     {
-        listings = await Listing.find().sort({ date: -1 }); // Most recent listings to least recent that aren't yours
+        listings = await Listing.find().sort({ date: -1 }); // Most recent listings to least recent
     }
 
-    res.render('listings.html', { listings: listings, token: token, page: '/ Listings', active: { listings: true }});
+    res.render('listings.html', { listings: listings, token: token, page: '/ Listings', active: { listings: true }, id: id});
+});
+
+app.get('/listings/filter/:category', async (req, res) =>
+{
+    const { cookies } = req;
+
+    token = cookies.token;
+
+    id = cookies.id;
+
+    category = req.params.category;
+
+    if(token && id)
+    {
+        listings = await Listing.find({ user: { $nin: id }, category: category }).sort({ date: -1 }); // Most recent listings to least recent that aren't yours
+    } 
+    else
+    {
+        listings = await Listing.find({ category: category }).sort({ date: -1 }); // Most recent listings to least recent that aren't yours
+    }
+
+    res.render('listings.html', { listings: listings, token: token, page: '/ Listings', active: { listings: true }, id: id});
+});
+
+app.post('/listings/query', async (req, res) =>
+{
+    const { cookies } = req;
+
+    token = cookies.token;
+
+    id = cookies.id;
+
+    query = req.body.query;
+
+    if(token && id)
+    {
+        // listings = await Listing.find({ user: { $nin: id }, title: query }).sort({ date: -1 }); // Most recent listings to least recent that aren't yours
+
+        listings = await Listing.find( { $text: { $search: query } } ).sort({ date: -1 }); // Most recent listings to least recent depending on query
+
+        listings = listings.filter(listing => listing.user != id);
+    } 
+    else
+    {
+        listings = await Listing.find( { $text: { $search: query } } ).sort({ date: -1 }); // Most recent listings to least recent depending on query
+        // listings = await Listing.find({ title: query }).sort({ date: -1 }); // Most recent listings to least recent that aren't yours
+    }
+
+    res.render('listings.html', { listings: listings, token: token, page: '/ Listings', active: { listings: true }, query: query});
 });
 
 app.get('/listings/:id', async (req, res) =>
@@ -287,7 +332,7 @@ app.get('/listings/:id', async (req, res) =>
     // Shows specific listing
 
     listing = await Listing.findById(req.params.id);
-
+    
     res.render('listing.html', { listing: listing, token: token });
 });
 
@@ -302,8 +347,6 @@ app.get('/listings/:id/edit', async (req, res) =>
     // Shows specific listing
 
     listing = await Listing.findById(req.params.id);
-
-    console.log(listing);
 
     if(listing.user != id || !listing)
     {
@@ -348,13 +391,10 @@ app.post('/listings/:id/delete', async (req, res) =>
 
     // Shows specific listing
 
-    listing = Listing.findById(req.params.id);
+    listing = await Listing.findById(req.params.id);
 
     if((listing.user != id) || !listing) // If listing is not from the current user's or doesn't exist, redirect back to the index page
     {
-        console.log(listing.user);
-        console.log(id);
-        console.log(listing);
         return res.redirect('/');
     }
 
@@ -413,16 +453,28 @@ app.post('/create', auth, async (req, res) =>
     listing.category = listing.category;
     listing.user = id;
 
-    console.log(listing);
-
     user = await User.findById(id).select('-password'); // Get current user's data
 
     listing.first_name = user.first_name;
     listing.last_name = user.last_name;
 
+    // if(listing.title != null || listing.description != null || listing.price != null || listing.category != null)
+    // {
+    //     return res.redirect('/create');
+    // }
+
     await listing.save();
 
-    res.redirect('/listings');
+    return res.redirect('/listings');
+});
+
+hbs.registerHelper('ifEq', function(arg1, arg2, options) 
+{
+    return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
+});
+
+hbs.registerHelper('ifNotEq', function(arg1, arg2, options) {
+    return (arg1 != arg2) ? options.fn(this) : options.inverse(this);
 });
 
 const PORT = process.envPORT || 3000;

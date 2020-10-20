@@ -30,6 +30,11 @@ footer {
     width: 100%;
 }
 
+.pt-5, .py-5
+{
+    padding-top: 1.5rem!important;
+}
+
 #register-form {
     padding-top: 60px;
 }
@@ -52,4 +57,14 @@ footer {
 
 #my_listing {
     padding-top: 50px;
+}
+
+input {
+    outline: none;
+    border: none;
+}
+
+a {
+    text-decoration: none !important;
+    color: black !important;
 }
