@@ -4,7 +4,7 @@
     <div class="row">
       <div class="col-lg-3">
         <h1 class="my-4">Tronix</h1>
-        <div class="list-group">
+        <div class="list-group" id="categories">
           <input type="text" class="list-group-item" placeholder="Search..."/>
           <a href="/listings" class="list-group-item">All</a>
           <a href="#" class="list-group-item">Gaming</input>
@@ -24,14 +24,6 @@
             <h3 class="card-title">{{title}}</h3>
             <h4>${{price}}</h4>
             <p class="card-text">{{description}}</p>
-            <!-- <div class="row">
-              <form method="post" action="/listings/{{_id}}/delete" class="btn btn-primary">
-                <!-- <input type="hidden" name="extra_submit_param" value="extra_submit_value"> -->
-                <!-- <button type="submit" class="btn btn-primary">Delete</button> -->
-                <!-- Delete
-              </form>
-            </div> -->
-
             <a href="/listings/{{_id}}/edit" class="btn btn-primary">Edit</a>
             <form method="post" action="/listings/{{_id}}/delete" class="btn btn-primary">
               <button style="color: inherit; background-color: inherit; size: inherit; border: none; height: 18px;" type="submit">Delete</button>
