@@ -39,6 +39,7 @@ const ListingSchema = new mongoose.Schema({
     photo:
     {
         type: String,
+        required: true
     },
     date: 
     {

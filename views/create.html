@@ -3,7 +3,7 @@
       <div id="listing-form">
         <h1>Create a listing</h1>
         <br>
-        <form action="/create" method="post">
+        <form action="/create" method="post" enctype="multipart/form-data">
             <div class="form-group">
               <label for="InputTitle1">Title</label>
               <input type="text" name="title" class="form-control" aria-describedby="titleHelp" placeholder="Enter title" required>
@@ -27,7 +27,9 @@
                 <option value="Phones">Phones</option>
               </select>
             </div>
-            <button type="submit" class="btn btn-primary">Photo</button>
+            <input name="listingImage" type="file" required></input>
+            <br>
+            <br>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
       </div>

@@ -9,6 +9,7 @@ const config = require('config');
 const exphbs = require( 'express-handlebars');
 const hbs = require('handlebars');
 const jwt = require('jsonwebtoken');
+const multer = require('multer');
 const path = require('path');
 const session = require('express-session');
 const { allowInsecurePrototypeAccess } = require('@handlebars/allow-prototype-access');
@@ -41,6 +42,44 @@ app.use(bodyParser.json());
 app.use(session({secret: "Secret Code"}));
 
 app.use(express.static(__dirname + '/public'));
+
+// Set storage engine
+const storage = multer.diskStorage({
+    destination: './public/uploads',
+    filename: function(req, file, cb)
+    {
+        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+    }
+});
+
+const upload = multer({
+    storage: storage,
+    limits: {fileSize: 1024 * 1024 * 3},
+    fileFilter: function(req, file, cb)
+    {
+        checkFileType(file, cb);
+    }
+})
+  
+  // Check File Type
+  function checkFileType(file, cb)
+  {
+    // Allowed ext
+    const filetypes = /jpeg|jpg|png/;
+    // Check ext
+    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+    // Check mime
+    const mimetype = filetypes.test(file.mimetype);
+  
+    if(mimetype && extname)
+    {
+      return cb(null,true);
+    } 
+    else 
+    {
+      cb('Error: Images Only!');
+    }
+  }
 
 // index
 
@@ -271,7 +310,9 @@ app.get('/listings', async (req, res) =>
         listings = await Listing.find().sort({ date: -1 }); // Most recent listings to least recent
     }
 
-    res.render('listings.html', { listings: listings, token: token, page: '/ Listings', active: { listings: true }, id: id});
+    display = await Listing.find().sort({ date: -1 }).limit(3);
+
+    res.render('listings.html', { listings: listings, display: display, token: token, page: '/ Listings', active: { listings: true }, id: id});
 });
 
 app.get('/listings/filter/:category', async (req, res) =>
@@ -293,7 +334,9 @@ app.get('/listings/filter/:category', async (req, res) =>
         listings = await Listing.find({ category: category }).sort({ date: -1 }); // Most recent listings to least recent that aren't yours
     }
 
-    res.render('listings.html', { listings: listings, token: token, page: '/ Listings', active: { listings: true }, id: id});
+    display = await Listing.find().sort({ date: -1 }).limit(3);
+
+    res.render('listings.html', { listings: listings, display: display, token: token, page: '/ Listings', active: { listings: true }, id: id});
 });
 
 app.post('/listings/query', async (req, res) =>
@@ -308,8 +351,6 @@ app.post('/listings/query', async (req, res) =>
 
     if(token && id)
     {
-        // listings = await Listing.find({ user: { $nin: id }, title: query }).sort({ date: -1 }); // Most recent listings to least recent that aren't yours
-
         listings = await Listing.find( { $text: { $search: query } } ).sort({ date: -1 }); // Most recent listings to least recent depending on query
 
         listings = listings.filter(listing => listing.user != id);
@@ -317,23 +358,33 @@ app.post('/listings/query', async (req, res) =>
     else
     {
         listings = await Listing.find( { $text: { $search: query } } ).sort({ date: -1 }); // Most recent listings to least recent depending on query
-        // listings = await Listing.find({ title: query }).sort({ date: -1 }); // Most recent listings to least recent that aren't yours
     }
 
-    res.render('listings.html', { listings: listings, token: token, page: '/ Listings', active: { listings: true }, query: query});
+    display = await Listing.find().sort({ date: -1 }).limit(3);
+
+    res.render('listings.html', { listings: listings, display: display, token: token, page: '/ Listings', active: { listings: true }, query: query});
 });
 
 app.get('/listings/:id', async (req, res) =>
 {
     const { cookies } = req;
 
-    token = cookies.token;
+    token = cookies.token;    
+    
+    id = cookies.id;
+
+    CurrentUserMade = false;
 
     // Shows specific listing
 
     listing = await Listing.findById(req.params.id);
+
+    if(listing.user == id)
+    {
+        CurrentUserMade = true;
+    }
     
-    res.render('listing.html', { listing: listing, token: token });
+    res.render('listing.html', { listing: listing, token: token, CurrentUserMade: CurrentUserMade, active: { listings: true } });
 });
 
 app.get('/listings/:id/edit', async (req, res) =>
@@ -435,7 +486,7 @@ app.get('/create', auth, (req, res) =>
     res.render('create.html', { token: token, page: '/ Create', active: { create: true }});
 });
 
-app.post('/create', auth, async (req, res) =>
+app.post('/create', upload.single('listingImage'), auth, async (req, res) =>
 {
     const { title, description, price, category } = req.body;
 
@@ -445,7 +496,7 @@ app.post('/create', auth, async (req, res) =>
 
     // Create a new listing
 
-    listing = new Listing({title, description, price, category});
+    listing = new Listing({title: title, description: description, price: price, category: category, photo: req.file.filename});
 
     listing.title = listing.title.trim();
     listing.description = listing.description.trim();
@@ -458,26 +509,11 @@ app.post('/create', auth, async (req, res) =>
     listing.first_name = user.first_name;
     listing.last_name = user.last_name;
 
-    // if(listing.title != null || listing.description != null || listing.price != null || listing.category != null)
-    // {
-    //     return res.redirect('/create');
-    // }
-
     await listing.save();
 
     return res.redirect('/listings');
 });
 
-hbs.registerHelper('ifEq', function(arg1, arg2, options) 
-{
-    return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
-});
-
-hbs.registerHelper('ifNotEq', function(arg1, arg2, options) {
-    return (arg1 != arg2) ? options.fn(this) : options.inverse(this);
-});
-
 const PORT = process.envPORT || 3000;
 
 app.listen(PORT, () => console.log("Server started on port " + PORT));
-

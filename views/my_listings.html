@@ -1,24 +1,10 @@
 <body>
-    <!-- <div class="container">
-        {{#listings}}
-        <div class="card">
-            <div class="card-header"><strong>{{title}}</strong></div>
-                <div class="card-body">
-                    <p class="card-text">{{description}}</p>
-                    <p class="card-text">${{price}}</p>
-                </div>
-            </div>
-        </div>
-        {{/listings}}
-    </div>
-    <br> -->
-
     <div class="container">
         <div class="row" id="my_listing">
             {{#listings}}
             <div class="col-lg-4 col-md-6 mb-4">
                 <div class="card h-20">
-                    <a href="/listings/{{_id}}"><img class="card-img-top" src="http://placehold.it/700x400" alt=""></a>
+                    <a href="/listings/{{_id}}"><img class="card-img-top" src="/uploads/{{photo}}" alt=""></a>
                     <div class="card-body">
                         <h4 class="card-title">
                         <a href="/listings/{{_id}}">{{title}}</a>

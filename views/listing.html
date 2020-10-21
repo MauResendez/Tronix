@@ -5,32 +5,49 @@
       <div class="col-lg-3">
         <h1 class="my-4">Tronix</h1>
         <div class="list-group" id="categories">
-          <input type="text" class="list-group-item" placeholder="Search..."/>
+          <form class="list-group-item" action="/listings/query" method="post">
+            <input type="text" name="query" value="{{query}}" placeholder="Search..."/>
+          </form>          
           <a href="/listings" class="list-group-item">All</a>
-          <a href="#" class="list-group-item">Gaming</input>
-          <a href="#" class="list-group-item">Music</a>
-          <a href="#" class="list-group-item">TVs</a>
-          <a href="#" class="list-group-item">Computers</a>
-          <a href="#" class="list-group-item">Phones</a>
+          <a href="/listings/filter/Gaming" class="list-group-item">Gaming</a>
+          <a href="/listings/filter/Music" class="list-group-item">Music</a>
+          <a href="/listings/filter/TVs" class="list-group-item">TVs</a>
+          <a href="/listings/filter/Computers" class="list-group-item">Computers</a>
+          <a href="/listings/filter/Phones" class="list-group-item">Phones</a>
         </div>
       </div>
       <!-- /.col-lg-3 -->
 
       <div class="col-lg-9">
-        {{#listing}}
-        <div class="card mt-4">
-          <img class="card-img-top img-fluid" src="http://placehold.it/900x400" alt="">
-          <div class="card-body">
-            <h3 class="card-title">{{title}}</h3>
-            <h4>${{price}}</h4>
-            <p class="card-text">{{description}}</p>
-            <a href="/listings/{{_id}}/edit" class="btn btn-primary">Edit</a>
-            <form method="post" action="/listings/{{_id}}/delete" class="btn btn-primary">
-              <button style="color: inherit; background-color: inherit; size: inherit; border: none; height: 18px;" type="submit">Delete</button>
-            </form>
+        {{#if CurrentUserMade}}
+          {{#listing}}
+          <div class="card mt-4">
+            <img class="card-img-top img-fluid" src="/uploads/{{photo}}" alt="">
+            <div class="card-body">
+              <h3 class="card-title">{{title}}</h3>
+              <h4>${{price}}</h4>
+              <p class="card-text">{{description}}</p>
+              <a href="/listings/{{_id}}/edit" class="btn btn-primary">Edit</a>
+              <form method="post" action="/listings/{{_id}}/delete" class="btn btn-primary" style="height: 38px">
+                <button style="color: inherit; background-color: inherit; size: inherit; border: none; height: 25px;" type="submit">Delete</button>
+              </form>
+            </div>
           </div>
-        </div>
-        {{/listing}}
+          {{/listing}}
+        {{else}}
+          {{#listing}}
+            <div class="card mt-4">
+              <img class="card-img-top img-fluid" src="http://placehold.it/900x400" alt="">
+              <div class="card-body">
+                <h3 class="card-title">{{title}}</h3>
+                <h4>${{price}}</h4>
+                <p class="card-text">{{description}}</p>
+              </div>
+            </div>
+          {{/listing}}
+        {{/if}}
+        
+
         <!-- /.card -->
 
         <div class="card card-outline-secondary my-4">
