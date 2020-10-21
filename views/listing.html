@@ -18,7 +18,7 @@
       </div>
       <!-- /.col-lg-3 -->
 
-      <div class="col-lg-9">
+      <!-- <div class="col-lg-9">
         {{#if CurrentUserMade}}
           {{#listing}}
           <div class="card mt-4">
@@ -37,17 +37,68 @@
         {{else}}
           {{#listing}}
             <div class="card mt-4">
-              <img class="card-img-top img-fluid" src="http://placehold.it/900x400" alt="">
+              <img class="card-img-top img-fluid" src="/uploads/{{photo}}" alt="{{title}}">
               <div class="card-body">
                 <h3 class="card-title">{{title}}</h3>
                 <h4>${{price}}</h4>
                 <p class="card-text">{{description}}</p>
-              </div>
-            </div>
-          {{/listing}}
+                <form action="/listings/{{_id}}/payment" method="POST">
+                  <script
+                      src="//checkout.stripe.com/v2/checkout.js"
+                      class="stripe-button"
+                      data-key="{{key}}" 
+                      data-amount='{{price}}' 
+                      data-currency="usd" 
+                      data-name="{{firstname}} {{lastname}}" 
+                      data-description="{{title}}" 
+                      data-locale="auto"> 
+                  </script> 
+                </form> 
+                 <a href="/listings/{{_id}}/payment" class="btn btn-primary">Purchase Here</a> -->
+              <!-- </div>
+            </div> -->
+          <!-- {{/listing}}
         {{/if}}
-        
+      </div> -->
 
+      <div class="col-lg-9">
+        {{#if CurrentUserMade}}
+          <div class="card mt-4">
+            <img class="card-img-top img-fluid" src="/uploads/{{listing.photo}}" alt="{{listing.title}}">
+            <div class="card-body">
+              <h3 class="card-title">{{listing.title}}</h3>
+              <h4>${{listing.price}}</h4>
+              <p class="card-text">{{listing.description}}</p>
+              <a href="/listings/{{listing._id}}/edit" class="btn btn-primary">Edit</a>
+              <form method="post" action="/listings/{{listing._id}}/delete" class="btn btn-primary" style="height: 38px">
+                <button style="color: inherit; background-color: inherit; size: inherit; border: none; height: 25px;" type="submit">Delete</button>
+              </form>
+            </div>
+          </div>
+        {{else}}
+          <div class="card mt-4">
+            <img class="card-img-top img-fluid" src="/uploads/{{listing.photo}}" alt="{{listing.title}}">
+            <div class="card-body">
+              <h3 class="card-title">{{listing.title}}</h3>
+              <h4>${{listing.price}}</h4>
+              <p class="card-text">{{listing.description}}</p>
+              <form action="/listings/{{listing._id}}/payment" method="POST">
+                <script
+                    src="//checkout.stripe.com/v2/checkout.js"
+                    class="stripe-button"
+                    data-key="{{key}}" 
+                    data-amount='{{price}}' 
+                    data-currency="usd" 
+                    data-name="{{user.first_name}} {{user.last_name}}" 
+                    data-description="{{listing.title}}" 
+                    data-locale="auto"> 
+                </script> 
+              </form> 
+            </div>
+          </div>
+        {{/if}}
+      </div>
+      
         <!-- /.card -->
 
         <div class="card card-outline-secondary my-4">

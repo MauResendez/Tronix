@@ -14,6 +14,10 @@ const path = require('path');
 const session = require('express-session');
 const { allowInsecurePrototypeAccess } = require('@handlebars/allow-prototype-access');
 
+const secret_key = config.get('SECRET_KEY');
+
+const stripe = require('stripe')(secret_key);
+
 const auth = require('./middleware/auth');
 const User = require('./models/User');
 const Listing = require('./models/Listing');
@@ -86,9 +90,7 @@ const upload = multer({
 app.get('/', async (req, res) =>
 {
     const { cookies } = req;
-
     token = cookies.token;
-
     id = cookies.id;
 
     if(token && id)
@@ -108,7 +110,6 @@ app.get('/', async (req, res) =>
 app.get('/register', (req, res) =>
 {
     const { cookies } = req;
-
     token = cookies.token;
 
     if(token)
@@ -201,7 +202,6 @@ app.post('/register',
 app.get('/login', (req, res) =>
 {
     const { cookies } = req;
-
     token = cookies.token;
 
     if(token)
@@ -294,9 +294,7 @@ app.get('/logout', (req, res) =>
 app.get('/listings', async (req, res) =>
 {
     const { cookies } = req;
-
     token = cookies.token;
-
     id = cookies.id;
 
     // Gets all listings
@@ -318,11 +316,8 @@ app.get('/listings', async (req, res) =>
 app.get('/listings/filter/:category', async (req, res) =>
 {
     const { cookies } = req;
-
     token = cookies.token;
-
     id = cookies.id;
-
     category = req.params.category;
 
     if(token && id)
@@ -342,17 +337,13 @@ app.get('/listings/filter/:category', async (req, res) =>
 app.post('/listings/query', async (req, res) =>
 {
     const { cookies } = req;
-
     token = cookies.token;
-
     id = cookies.id;
-
     query = req.body.query;
 
     if(token && id)
     {
         listings = await Listing.find( { $text: { $search: query } } ).sort({ date: -1 }); // Most recent listings to least recent depending on query
-
         listings = listings.filter(listing => listing.user != id);
     } 
     else
@@ -368,12 +359,12 @@ app.post('/listings/query', async (req, res) =>
 app.get('/listings/:id', async (req, res) =>
 {
     const { cookies } = req;
-
     token = cookies.token;    
-    
     id = cookies.id;
-
     CurrentUserMade = false;
+    pub_key = config.get('PUBLISHABLE_KEY');
+    listing = await Listing.findById(req.params.id);
+    user = await User.findById(id).select('-password');
 
     // Shows specific listing
 
@@ -383,16 +374,16 @@ app.get('/listings/:id', async (req, res) =>
     {
         CurrentUserMade = true;
     }
+
+    res.render('listing.html', { user: user, listing: listing, price: listing.price * 100, key: pub_key, CurrentUserMade: CurrentUserMade, active: { listings: true }})
     
-    res.render('listing.html', { listing: listing, token: token, CurrentUserMade: CurrentUserMade, active: { listings: true } });
+    // res.render('listing.html', { listing: listing, token: token, CurrentUserMade: CurrentUserMade, active: { listings: true } });
 });
 
 app.get('/listings/:id/edit', async (req, res) =>
 {
     const { cookies } = req;
-
     token = cookies.token;
-
     id = cookies.id;
 
     // Shows specific listing
@@ -410,7 +401,6 @@ app.get('/listings/:id/edit', async (req, res) =>
 app.post('/listings/:id/edit', async (req, res) =>
 {
     const { cookies } = req;
-
     id = cookies.id;
 
     // Shows specific listing
@@ -437,7 +427,6 @@ app.post('/listings/:id/edit', async (req, res) =>
 app.post('/listings/:id/delete', async (req, res) =>
 {
     const { cookies } = req;
-
     id = cookies.id;
 
     // Shows specific listing
@@ -456,14 +445,42 @@ app.post('/listings/:id/delete', async (req, res) =>
 
 // Purchase route
 
+app.post('/listings/:id/payment', auth, async (req, res) =>
+{
+    const { cookies } = req;
+    token = cookies.token;
+    id = cookies.id;
+    listing = await Listing.findById(req.params.id);
+    user = await User.findById(id);
+
+    if(listing.user == id)
+    {
+        return res.redirect('/');
+    }
+
+    stripe.customers.create({
+        email: req.body.stripeEmail,
+        source: req.body.stripeToken,
+        name: user.first_name + " " + user.last_name,
+    }).then((customer) => {
+        return stripe.charges.create({
+            amount: listing.price * 100,
+            description: listing.title,
+            currency: 'usd',
+            customer: customer.id
+        }).then((charge) => {
+            console.log(charge);
+            return res.redirect('/');
+        })
+    })
+});
+
 // my listings
 
 app.get('/my_listings', auth, async (req, res) =>
 {
     const { cookies } = req;
-
     token = cookies.token;
-
     id = cookies.id;
 
     // Gets all listings
@@ -478,7 +495,6 @@ app.get('/my_listings', auth, async (req, res) =>
 app.get('/create', auth, (req, res) =>
 {
     const { cookies } = req;
-
     token = cookies.token;
 
     // Go to create form
@@ -489,9 +505,7 @@ app.get('/create', auth, (req, res) =>
 app.post('/create', upload.single('listingImage'), auth, async (req, res) =>
 {
     const { title, description, price, category } = req.body;
-
     const { cookies } = req;
-
     id = cookies.id;
 
     // Create a new listing
