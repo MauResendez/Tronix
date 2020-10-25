@@ -499,12 +499,8 @@ app.get('/listings/:id/add_comment', auth, async (req, res) =>
 
     listing = await Listing.findById(req.params.id);
 
-    console.log(listing);
-    console.log(req.params.id);
-
     if(!listing) // If listing is not from the current user's or doesn't exist, redirect back to the index page
     {
-        console.log("HI");
         return res.redirect('/');
     }
 
@@ -573,7 +569,6 @@ app.post('/listings/:id/payment', auth, async (req, res) =>
             currency: 'usd',
             customer: customer.id
         }).then((charge) => {
-            console.log(charge);
             return res.redirect('/');
         })
     })
