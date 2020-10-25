@@ -4,7 +4,7 @@
         <h1>Edit your listing</h1>
         <br>
         {{#listing}}
-        <form action="/listings/{{_id}}/edit" method="post">
+        <form action="/listings/{{_id}}/edit" method="post" enctype="multipart/form-data">
             <div class="form-group">
               <label for="InputTitle1">Title</label>
               <input type="text" name="title" class="form-control" aria-describedby="titleHelp" placeholder="Enter title" value="{{title}}">
@@ -32,9 +32,7 @@
                 <option value="Phones">Phones</option>
               </select>
             </div>
-            <input name="listingImage" type="file" id="file" style="display:none"></input>
-            <!-- <input name="listingImage" title=" " type="file" id="file"></input>
-            <label for="file">{{photo}}</label> -->
+            <input name="listingImage" type="file"></input>
             <br>
             <br>
             <button type="submit" class="btn btn-primary">Submit</button>

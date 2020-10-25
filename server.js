@@ -419,7 +419,7 @@ app.get('/listings/:id', async (req, res) =>
     res.render('listing.html', { user: user, listing: listing, price: listing.price * 100, key: pub_key, token: token, CurrentUserMade: CurrentUserMade, active: { listings: true }})
 });
 
-app.get('/listings/:id/edit', async (req, res) =>
+app.get('/listings/:id/edit', auth, async (req, res) =>
 {
     const { cookies } = req;
     token = cookies.token;
@@ -437,9 +437,10 @@ app.get('/listings/:id/edit', async (req, res) =>
     res.render('edit.html', { listing: listing, token: token });
 });
 
-app.post('/listings/:id/edit', upload.single('listingImage'), async (req, res) =>
+app.post('/listings/:id/edit', upload.single('listingImage'), auth, async (req, res) =>
 {
     const { cookies } = req;
+    token = cookies.token;
     id = cookies.id;
 
     // Shows specific listing
@@ -455,7 +456,11 @@ app.post('/listings/:id/edit', upload.single('listingImage'), async (req, res) =
     listing.description = req.body.description;
     listing.price = req.body.price;
     listing.category = req.body.category;
-    listing.photo = req.file.filename;
+
+    if(req.file) // If there is a name, that means the user inputted a different picture to replace the current one
+    {
+        listing.photo = req.file.filename;
+    }
 
     await listing.save();
 
@@ -464,9 +469,10 @@ app.post('/listings/:id/edit', upload.single('listingImage'), async (req, res) =
     return res.redirect('/my_listings');
 });
 
-app.post('/listings/:id/delete', async (req, res) =>
+app.post('/listings/:id/delete', auth, async (req, res) =>
 {
     const { cookies } = req;
+    token = cookies.token;
     id = cookies.id;
 
     // Shows specific listing
@@ -481,6 +487,64 @@ app.post('/listings/:id/delete', async (req, res) =>
     await listing.remove();
 
     return res.redirect('/my_listings');
+});
+
+app.get('/listings/:id/add_comment', auth, async (req, res) =>
+{
+    const { cookies } = req;
+    token = cookies.token;
+    id = cookies.id;
+
+    // Shows specific listing
+
+    listing = await Listing.findById(req.params.id);
+
+    console.log(listing);
+    console.log(req.params.id);
+
+    if(!listing) // If listing is not from the current user's or doesn't exist, redirect back to the index page
+    {
+        console.log("HI");
+        return res.redirect('/');
+    }
+
+    res.render('comment.html', { listing: listing, token: token });
+});
+
+app.post('/listings/:id/add_comment', auth, async (req, res) =>
+{
+    const { cookies } = req;
+    id = cookies.id;
+
+    // Shows specific listing
+
+    user = await User.findById(id);
+    listing = await Listing.findById(req.params.id);
+
+    if(!req.body.comment || !req.body.title)
+    {
+        return res.redirect('/listings/' + req.params.id + '/add_comment');
+    }
+
+    const newComment =
+    {
+        title: req.body.title,
+        comment: req.body.comment,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        user: req.user.id
+    };
+
+    if(!listing || !user) // If listing or user doesn't exist, go to index page
+    {
+        return res.redirect('/');
+    }
+
+    listing.comments.unshift(newComment);
+
+    await listing.save();
+
+    return res.redirect('/listings/' + req.params.id);
 });
 
 // Purchase route

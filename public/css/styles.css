@@ -47,6 +47,10 @@ footer {
     padding-top: 60px;
 }
 
+#comment-form {
+    padding-top: 140px;
+}
+
 .vertical-center {
   margin: 0;
   position: absolute;

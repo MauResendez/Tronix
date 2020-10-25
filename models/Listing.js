@@ -41,6 +41,42 @@ const ListingSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    comments:
+    [
+        {
+            user: 
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'user',
+                required: true
+            },
+            title: 
+            {
+                type: String,
+                required: true
+            },
+            comment:
+            {
+                type: String,
+                required: true
+            },
+            first_name:
+            {
+                type: String,
+                required: true
+            },
+            last_name:
+            {
+                type: String,
+                required: true
+            },
+            date:
+            {
+                type: Date,
+                default: Date.now
+            }
+        }
+    ],
     date: 
     {
         type: Date,

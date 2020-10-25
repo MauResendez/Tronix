@@ -18,49 +18,6 @@
       </div>
       <!-- /.col-lg-3 -->
 
-      <!-- <div class="col-lg-9">
-        {{#if CurrentUserMade}}
-          {{#listing}}
-          <div class="card mt-4">
-            <img class="card-img-top img-fluid" src="/uploads/{{photo}}" alt="">
-            <div class="card-body">
-              <h3 class="card-title">{{title}}</h3>
-              <h4>${{price}}</h4>
-              <p class="card-text">{{description}}</p>
-              <a href="/listings/{{_id}}/edit" class="btn btn-primary">Edit</a>
-              <form method="post" action="/listings/{{_id}}/delete" class="btn btn-primary" style="height: 38px">
-                <button style="color: inherit; background-color: inherit; size: inherit; border: none; height: 25px;" type="submit">Delete</button>
-              </form>
-            </div>
-          </div>
-          {{/listing}}
-        {{else}}
-          {{#listing}}
-            <div class="card mt-4">
-              <img class="card-img-top img-fluid" src="/uploads/{{photo}}" alt="{{title}}">
-              <div class="card-body">
-                <h3 class="card-title">{{title}}</h3>
-                <h4>${{price}}</h4>
-                <p class="card-text">{{description}}</p>
-                <form action="/listings/{{_id}}/payment" method="POST">
-                  <script
-                      src="//checkout.stripe.com/v2/checkout.js"
-                      class="stripe-button"
-                      data-key="{{key}}" 
-                      data-amount='{{price}}' 
-                      data-currency="usd" 
-                      data-name="{{firstname}} {{lastname}}" 
-                      data-description="{{title}}" 
-                      data-locale="auto"> 
-                  </script> 
-                </form> 
-                 <a href="/listings/{{_id}}/payment" class="btn btn-primary">Purchase Here</a> -->
-              <!-- </div>
-            </div> -->
-          <!-- {{/listing}}
-        {{/if}}
-      </div> -->
-
       <div class="col-lg-9">
         {{#if CurrentUserMade}}
           <div class="card mt-4">
@@ -73,6 +30,7 @@
               <form method="post" action="/listings/{{listing._id}}/delete" class="btn btn-primary" style="height: 38px">
                 <button style="color: inherit; background-color: inherit; size: inherit; border: none; height: 25px;" type="submit">Delete</button>
               </form>
+              <a href="/listings/{{listing._id}}/add_comment" class="btn btn-primary" style="width: 175px; height: 38px;">Leave a comment</a>
             </div>
           </div>
         {{else}}
@@ -92,8 +50,10 @@
                     data-name="{{user.first_name}} {{user.last_name}}" 
                     data-description="{{listing.title}}" 
                     data-locale="auto"> 
-                </script> 
+                </script>
               </form> 
+              <br>
+              <a href="/listings/{{listing._id}}/add_comment" class="btn btn-primary" style="width: 175px; height: 38px;">Leave a comment</a>
             </div>
           </div>
         {{/if}}
@@ -101,23 +61,21 @@
       
         <!-- /.card -->
 
-        <div class="card card-outline-secondary my-4">
-          <div class="card-header">
-            Product Reviews
+        <div class="col-lg-12">
+          {{#each listing.comments}}
+          <div class="card card-outline-secondary my-4">
+            <div class="card-header">
+              {{title}}
+            </div>
+            <div class="card-body">
+              <p>{{comment}}</p>
+              <small class="text-muted">Posted by {{first_name}} {{last_name}}</small>
+            </div>
           </div>
-          <div class="card-body">
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Omnis et enim aperiam inventore, similique necessitatibus neque non! Doloribus, modi sapiente laboriosam aperiam fugiat laborum. Sequi mollitia, necessitatibus quae sint natus.</p>
-            <small class="text-muted">Posted by Anonymous on 3/1/17</small>
-            <hr>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Omnis et enim aperiam inventore, similique necessitatibus neque non! Doloribus, modi sapiente laboriosam aperiam fugiat laborum. Sequi mollitia, necessitatibus quae sint natus.</p>
-            <small class="text-muted">Posted by Anonymous on 3/1/17</small>
-            <hr>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Omnis et enim aperiam inventore, similique necessitatibus neque non! Doloribus, modi sapiente laboriosam aperiam fugiat laborum. Sequi mollitia, necessitatibus quae sint natus.</p>
-            <small class="text-muted">Posted by Anonymous on 3/1/17</small>
-            <hr>
-            <a href="#" class="btn btn-success">Leave a Review</a>
-          </div>
+          {{/each}}
+          <!-- <a href="/listings/{{listing._id}}/add_comment" class="btn btn-primary" style="width: 265.3px; height: 38px;">Leave a comment</a> -->
         </div>
+
         <!-- /.card -->
 
       </div>
