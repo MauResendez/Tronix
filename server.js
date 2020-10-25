@@ -132,7 +132,17 @@ app.post('/register',
 
     if(!errors.isEmpty())
     {
-        return res.redirect('/register');
+        // return res.redirect('/register');
+        return res.render('register.html', 
+        { 
+            msg: "One or more fields is incorrectly inputted", 
+            first_name: req.body.first_name, 
+            last_name: req.body.last_name, 
+            email: req.body.email, 
+            password: req.body.password, 
+            page: '/ Register', 
+            active: { register: true }
+        });
     }
 
     const { first_name, last_name, email, password } = req.body;
@@ -144,7 +154,17 @@ app.post('/register',
 
         if(user)
         {
-            return res.redirect('/register');
+            // return res.redirect('/register');
+            return res.render('register.html', 
+            { 
+                msg: "User with email already exists", 
+                first_name: req.body.first_name, 
+                last_name: req.body.last_name, 
+                email: req.body.email, 
+                password: req.body.password, 
+                page: '/ Register', 
+                active: { register: true }
+            });
         }
 
         user = new User({first_name, last_name, email, password});
@@ -221,7 +241,14 @@ app.post('/login',
     const errors = validationResult(req);
     if(!errors.isEmpty())
     {
-        return res.redirect('/login');
+        return res.render('login.html', 
+        { 
+            msg: "One or more fields is incorrectly inputted", 
+            email: req.body.email, 
+            password: req.body.password, 
+            page: '/ Login', 
+            active: { login: true }
+        });
     }
 
     const { email, password } = req.body;
@@ -234,14 +261,28 @@ app.post('/login',
 
         if(!user)
         {
-            return res.redirect('/login');
+            return res.render('login.html', 
+            { 
+                msg: "No user exists with this email", 
+                email: req.body.email, 
+                password: req.body.password, 
+                page: '/ Login', 
+                active: { login: true }
+            });
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
 
         if(!isMatch)
         {
-            return res.redirect('/login');
+            return res.render('login.html', 
+            { 
+                msg: "Incorrect password", 
+                email: req.body.email, 
+                password: req.body.password, 
+                page: '/ Login', 
+                active: { login: true }
+            });
         }
 
         const payload = {
@@ -375,9 +416,7 @@ app.get('/listings/:id', async (req, res) =>
         CurrentUserMade = true;
     }
 
-    res.render('listing.html', { user: user, listing: listing, price: listing.price * 100, key: pub_key, CurrentUserMade: CurrentUserMade, active: { listings: true }})
-    
-    // res.render('listing.html', { listing: listing, token: token, CurrentUserMade: CurrentUserMade, active: { listings: true } });
+    res.render('listing.html', { user: user, listing: listing, price: listing.price * 100, key: pub_key, token: token, CurrentUserMade: CurrentUserMade, active: { listings: true }})
 });
 
 app.get('/listings/:id/edit', async (req, res) =>
@@ -398,7 +437,7 @@ app.get('/listings/:id/edit', async (req, res) =>
     res.render('edit.html', { listing: listing, token: token });
 });
 
-app.post('/listings/:id/edit', async (req, res) =>
+app.post('/listings/:id/edit', upload.single('listingImage'), async (req, res) =>
 {
     const { cookies } = req;
     id = cookies.id;
@@ -416,6 +455,7 @@ app.post('/listings/:id/edit', async (req, res) =>
     listing.description = req.body.description;
     listing.price = req.body.price;
     listing.category = req.body.category;
+    listing.photo = req.file.filename;
 
     await listing.save();
 
