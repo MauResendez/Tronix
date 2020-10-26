@@ -13,6 +13,7 @@ const multer = require('multer');
 const path = require('path');
 const session = require('express-session');
 const { allowInsecurePrototypeAccess } = require('@handlebars/allow-prototype-access');
+const favicon = require('serve-favicon');
 
 const secret_key = config.get('SECRET_KEY');
 
@@ -46,6 +47,7 @@ app.use(bodyParser.json());
 app.use(session({secret: "Secret Code"}));
 
 app.use(express.static(__dirname + '/public'));
+app.use(favicon(__dirname + '/public/img/favicon.ico'));
 
 // Set storage engine
 const storage = multer.diskStorage({
@@ -627,6 +629,6 @@ app.post('/create', upload.single('listingImage'), auth, async (req, res) =>
     return res.redirect('/listings');
 });
 
-const PORT = process.envPORT || 3000;
+const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => console.log("Server started on port " + PORT));
+app.listen(process.env.PORT || 3000, () => console.log("Server started on port " + PORT));

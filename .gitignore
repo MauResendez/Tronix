@@ -1,8 +1,6 @@
 scratch/
 node_modules/
-config/db.js
 config/default.json
-public/uploads
 npm-debug.log
 .DS_Store
 /*.env
