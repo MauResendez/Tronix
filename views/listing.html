@@ -30,7 +30,9 @@
               <form method="post" action="/listings/{{listing._id}}/delete" class="btn btn-primary" style="height: 38px">
                 <button style="color: inherit; background-color: inherit; size: inherit; border: none; height: 25px;" type="submit">Delete</button>
               </form>
+              {{#if user}}
               <a href="/listings/{{listing._id}}/add_comment" class="btn btn-primary" style="width: 175px; height: 38px;">Leave a comment</a>
+              {{/if}}
             </div>
           </div>
         {{else}}
@@ -54,8 +56,8 @@
                 </script>
               </form> 
               <br>
-              {{/if}}
               <a href="/listings/{{listing._id}}/add_comment" class="btn btn-primary" style="width: 175px; height: 38px;">Leave a comment</a>
+              {{/if}}
             </div>
           </div>
         {{/if}}
