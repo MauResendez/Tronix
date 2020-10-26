@@ -40,6 +40,7 @@
               <h3 class="card-title">{{listing.title}}</h3>
               <h4>${{listing.price}}</h4>
               <p class="card-text">{{listing.description}}</p>
+              {{#if user}}
               <form action="/listings/{{listing._id}}/payment" method="POST">
                 <script
                     src="//checkout.stripe.com/v2/checkout.js"
@@ -53,6 +54,7 @@
                 </script>
               </form> 
               <br>
+              {{/if}}
               <a href="/listings/{{listing._id}}/add_comment" class="btn btn-primary" style="width: 175px; height: 38px;">Leave a comment</a>
             </div>
           </div>
