@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "engines": {
-    "node": "10.x"
+    "node": "14.x"
   },
   "dependencies": {
     "@handlebars/allow-prototype-access": "^1.0.3",
