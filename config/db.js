@@ -1,6 +1,10 @@
 const { connect } = require("mongoose");
 
 const config = require('config');
+const dotenv = require("dotenv");
+
+// Load env
+dotenv.config({ path: './config.env' });
 // const db = config.get("MONGO_URI");
 const db = process.env.MONGO_URI;
 const mongoose = require('mongoose');
