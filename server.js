@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const bcrypt = require('bcryptjs');
 const { check, validationResult } = require('express-validator/check');
 const config = require('config');
+const dotenv = require("dotenv");
 const exphbs = require( 'express-handlebars');
 const hbs = require('handlebars');
 const jwt = require('jsonwebtoken');
@@ -15,7 +16,12 @@ const session = require('express-session');
 const { allowInsecurePrototypeAccess } = require('@handlebars/allow-prototype-access');
 const favicon = require('serve-favicon');
 
-const secret_key = config.get('SECRET_KEY');
+// Load env
+dotenv.config({ path: './config.env' });
+
+//const secret_key = config.get('SECRET_KEY');
+
+const secret_key = process.env.SECRET_KEY;
 
 const stripe = require('stripe')(secret_key);
 
@@ -191,7 +197,7 @@ app.post('/register',
 
         // Lets you get a jwt token from your payload and own config secret to use to authenticate access on private routes
 
-        jwt.sign(payload, config.get('jwtSecret'), 
+        jwt.sign(payload, process.env.jwtSecret, 
         {
             expiresIn: 360000
         }, 
@@ -295,7 +301,7 @@ app.post('/login',
 
         // Lets you get a jwt token from your payload and own config secret to use to authenticate access on private routes
 
-        jwt.sign(payload, config.get('jwtSecret'), 
+        jwt.sign(payload, process.env.jwtSecret, 
         {
             expiresIn: 360000
         }, 
@@ -405,7 +411,7 @@ app.get('/listings/:id', async (req, res) =>
     token = cookies.token;    
     id = cookies.id;
     CurrentUserMade = false;
-    pub_key = config.get('PUBLISHABLE_KEY');
+    pub_key = process.env.PUBLISHABLE_KEY;
     listing = await Listing.findById(req.params.id);
     user = await User.findById(id).select('-password');
 
